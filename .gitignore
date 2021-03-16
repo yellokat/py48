@@ -4,3 +4,4 @@ dist/*
 py48.egg-info/*
 venv/*
 __pycache__/*
+py48/__pycache__/*

@@ -1,8 +1,9 @@
 import pandas as pd
-import datetime, os
+import datetime, os, pkg_resources
 
 def __load_df():
-    df = pd.read_csv('py48/절입데이터.csv')
+    stream = pkg_resources.resource_stream(__name__, '절입데이터.csv')
+    df = pd.read_csv(stream)
     for i in range(1, 25):
         df.iloc[:,i] = df.iloc[:,0].astype(str) + '년 ' + df.iloc[:,i]
     df = df.set_index('연도')
