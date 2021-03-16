@@ -1,1 +1,6 @@
 .vscode/*
+build/*
+dist/*
+py48.egg-info/*
+venv/*
+__pycache__/*

@@ -1,7 +1,7 @@
 import pandas as pd
 import datetime, os
 
-def load_df():
+def __load_df():
     df = pd.read_csv('py48/절입데이터.csv')
     for i in range(1, 25):
         df.iloc[:,i] = df.iloc[:,0].astype(str) + '년 ' + df.iloc[:,i]
@@ -13,7 +13,17 @@ def load_df():
     return df
 
 def parse(year, month, day):
-    def parse_year(year):
+    '''
+    parse date into three pillars of korean fortune telling.
+    currently supports year, month, and day pillars. results are only accurate if input year is between 1900 and 2050.
+    NOTICE -- it is recommended to check the validity of year/month/day with the datetime module before passing arguments.
+    
+    year : integer (e.g. 1995)
+    month : integer of 1~12 (e.g. 11)
+    day : integer of 1~28/29/30/31 (e.g. 16)
+    return : string (e.g. '을해, 정해, 신해')
+    '''
+    def __parse_year(year):
         dict_year1 = {4:'갑', 5:'을', 6:'병', 7:'정', 8:'무', 9:'기', 0:'경', 1:'신', 2:'임', 3:'계'}
         dict_year2 = {4:'자', 5:'축', 6:'인', 7:'묘', 8:'진', 9:'사', 10:'오', 11:'미', 0:'신', 1:'유', 2:'술', 3:'해'}
         index_year1 = year % 10
@@ -22,39 +32,43 @@ def parse(year, month, day):
         return result_year
     
     # parse year
-    result_year = parse_year(year)
+    result_year = __parse_year(year)
         
     # parse month
     date = datetime.datetime(year, month, day)
-    srs = lunar_months_df.loc[year]
-    if date < srs.loc['소한']:
-        temp_year, temp_month = year - 1, 11
-    elif (srs.loc['소한'] <= date) & (date < srs.loc['경칩']):
-        temp_year, temp_month = year - 1, 12
-    elif (srs.loc['입춘'] <= date) & (date < srs.loc['경칩']):
-        temp_year, temp_month = year, 1
-    elif (srs.loc['경칩'] <= date) & (date < srs.loc['청명']):    
-        temp_year, temp_month = year, 2
-    elif (srs.loc['청명'] <= date) & (date < srs.loc['입하']):
-        temp_year, temp_month = year, 3
-    elif (srs.loc['입하'] <= date) & (date < srs.loc['망종']):    
-        temp_year, temp_month = year, 4
-    elif (srs.loc['망종'] <= date) & (date < srs.loc['소서']):
-        temp_year, temp_month = year, 5
-    elif (srs.loc['소서'] <= date) & (date < srs.loc['입추']):
-        temp_year, temp_month = year, 6
-    elif (srs.loc['입추'] <= date) & (date < srs.loc['백로']):
-        temp_year, temp_month = year, 7
-    elif (srs.loc['백로'] <= date) & (date < srs.loc['한로']):
-        temp_year, temp_month = year, 8
-    elif (srs.loc['한로'] <= date) & (date < srs.loc['입동']):
-        temp_year, temp_month = year, 9
-    elif (srs.loc['입동'] <= date) & (date < srs.loc['대설']):
-        temp_year, temp_month = year, 10
-    elif srs.loc['대설'] <= date:
-        temp_year, temp_month = year, 11
+    try:
+        srs = __lunar_months_df.loc[year]
+        if date < srs.loc['소한']:
+            temp_year, temp_month = year - 1, 11
+        elif (srs.loc['소한'] <= date) & (date < srs.loc['경칩']):
+            temp_year, temp_month = year - 1, 12
+        elif (srs.loc['입춘'] <= date) & (date < srs.loc['경칩']):
+            temp_year, temp_month = year, 1
+        elif (srs.loc['경칩'] <= date) & (date < srs.loc['청명']):    
+            temp_year, temp_month = year, 2
+        elif (srs.loc['청명'] <= date) & (date < srs.loc['입하']):
+            temp_year, temp_month = year, 3
+        elif (srs.loc['입하'] <= date) & (date < srs.loc['망종']):    
+            temp_year, temp_month = year, 4
+        elif (srs.loc['망종'] <= date) & (date < srs.loc['소서']):
+            temp_year, temp_month = year, 5
+        elif (srs.loc['소서'] <= date) & (date < srs.loc['입추']):
+            temp_year, temp_month = year, 6
+        elif (srs.loc['입추'] <= date) & (date < srs.loc['백로']):
+            temp_year, temp_month = year, 7
+        elif (srs.loc['백로'] <= date) & (date < srs.loc['한로']):
+            temp_year, temp_month = year, 8
+        elif (srs.loc['한로'] <= date) & (date < srs.loc['입동']):
+            temp_year, temp_month = year, 9
+        elif (srs.loc['입동'] <= date) & (date < srs.loc['대설']):
+            temp_year, temp_month = year, 10
+        elif srs.loc['대설'] <= date:
+            temp_year, temp_month = year, 11
+    except:
+        # we have no data if year < 1900 or 2050 < year
+        temp_year, temp_month = year, month
 
-    temp_year_result = parse_year(temp_year)
+    temp_year_result = __parse_year(temp_year)
     dict_month1 = {1:'갑', 2:'을', 3:'병', 4:'정', 5:'무', 6:'기', 7:'경', 8:'신', 9:'임', 0:'계'}
     dict_month2 = {11:'자', 12:'축', 1:'인', 2:'묘', 3:'진', 4:'사', 5:'오', 6:'미', 7:'신', 8:'유', 9:'술', 10:'해'}
     if temp_year_result[0] in ['갑', '기']:
@@ -83,6 +97,11 @@ def parse(year, month, day):
     return ', '.join([result_year, result_month, result_day])
 
 def element_count(gapja_string):
+    '''
+    input result from gapja_string to get dictionary of element counts.
+    gapja_string : result of py48.parser.parse, e.g. '을해, 정해, 신해'
+    return : e.g. {'화': 1, '수': 3, '목': 1, '금': 1, '토': 0}
+    '''
     element_dict = {
         '자':'수', '축':'토', '인':'목', '묘':'목', '진':'토', '사':'화', '오':'화', '미':'토',
         '신':'금', '유':'금', '술':'토', '해':'수', '갑':'목', '을':'목', '병':'화',
@@ -93,33 +112,4 @@ def element_count(gapja_string):
     element_count = {element:gapja_list.count(element) for element in element_list}
     return element_count
 
-lunar_months_df = load_df()
-
-'''
-if __name__ == "__main__":
-    lunar_months_df = load_df()
-    #calendar = KoreanLunarCalendar()
-    while True:
-        print('태어난 년도를 입력하세요.')
-        year = int(input())
-        print('태어난 달을 입력하세요.')
-        month = int(input())
-        print('태어난 날을 입력하세요.')
-        day = int(input())
-
-        #calendar.setSolarDate(year, month, day)
-        #dt = calendar.LunarIsoFormat()
-        #print(dt)
-        #print(calendar.getGapJaString())
-
-        #lunar_year = int(dt[0:4])
-        #lunar_month = int(dt[6:7])
-        #lunar_day = int(dt[9:10])
-        gapja_string = parse(lunar_months_df, year, month, day)
-        elements = element_count(gapja_string)
-
-        print(gapja_string)
-        print(elements)
-'''
-
-
+__lunar_months_df = __load_df()
