@@ -7,7 +7,7 @@ setup(
     author              = 'yellokat',
     author_email        = 'jenova195@gmail.com',
     url                 = 'https://github.com/yellokat/py48',
-    download_url        = 'https://github.com/yellokat/py48/archive/v1.0.1.tar.gz',
+    download_url        = 'https://github.com/yellokat/py48/archive/v1.1.tar.gz',
     install_requires    =  ['pandas'],
     packages            = find_packages(exclude = []),
     keywords            = [],
