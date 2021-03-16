@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name                = 'py48',
-    version             = '1.0.0',
+    version             = '1.1',
     description         = 'Korean fortune telling package using birthdate and time',
     author              = 'yellokat',
     author_email        = 'jenova195@gmail.com',
     url                 = 'https://github.com/yellokat/py48',
-    download_url        = 'https://github.com/yellokat/py48/archive/v1.0.0.tar.gz',
+    download_url        = 'https://github.com/yellokat/py48/archive/v1.0.1.tar.gz',
     install_requires    =  ['pandas'],
     packages            = find_packages(exclude = []),
     keywords            = [],
